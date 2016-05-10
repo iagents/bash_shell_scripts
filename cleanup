@@ -1,0 +1,37 @@
+!/bin/bash
+# clean up unnecessary logs from /var/log
+LOG_DIR=/var/log
+ROOT_UID=0
+LINES=50
+ERR_XCD=86 # error because I can't access to the /var/log
+ERR_NOT_ROOT_USER=87 # error due to non-root user
+
+# Check whether the user is root
+if [ "$UID" -ne "$ROOT_UID" ]; then
+   echo "Must be root to run this script!"
+   exit ERR_NOT_ROOT_USER
+fi
+
+# Check whether there is any input argument
+if [ -n "$1" ]; then
+   lines=$1
+else	
+   lines=$LINES
+fi
+
+cd $LOG_DIR
+
+if [ `pwd` != "$LOG_DIR" ] 
+then
+   echo "Can't access to $LOG_DIR!"
+   exit $ERR_XCD
+fi
+
+# what if there is no file called /var/log/messages?
+tail -n $lines messages > mesg.temp
+mv mesg.temp messages
+
+cat /dev/null > wtmp
+echo "Log files cleaned up!"
+
+exit 0
