@@ -1,0 +1,151 @@
+#!/bin/sh
+# shell functions main
+#
+# a frontend of find command
+findit()
+{
+if [ $# -lt 1 ]; then
+   echo "usage: findit file"
+   return 1
+fi
+find / -name $1 -print
+} 
+   
+#char_name()
+#{
+# char_name
+# usage: char_name string
+#if [ $# -lt 1 ]
+#then
+#   echo "usage: char_name \"input string\""
+#   return 1
+#fi
+#_LETTER_ONLY=$1
+# use awk to test whether the input string only contains characters!
+#_LETTER_ONLY=`echo $1|awk '{if($0~/[^a-z A-Z]/) print "1"}'`
+#if [ "$_LETTER_ONLY" != "" ]
+#then
+#   echo $_LETTER_ONLY
+#   return 1
+#else
+#   return 0
+#fi
+#
+#}
+
+is_directory()
+{
+# is_directory(): check whether an input parameter is a directory
+if [ $# -lt 1 ]; then
+     echo "usage: is_directory \"input directory\""
+     return 1
+fi
+
+_DIRECTORY_NAME=$1
+if [ ! -d $_DIRECTORY_NAME ]; then
+     echo "$_DIRECTORY_NAME is not a directory"
+     return 1
+else
+     echo "$_DIRECTORY_NAME is a directory"
+     return 0
+fi
+}
+
+continue_prompt()
+# continue_prompt
+# Usage) continue_prompt "string to display" default_answer
+{
+     _STR=$1
+     _DEFAULT=$2
+
+     if [ $# -lt 1 ]; then
+	 echo "[Error] continue_prompt: Need a string to display!"
+	 return 1
+     fi
+
+     # loop forever
+     while : # this is the same as "while true"
+     do
+	 echo -n "$_STR [Y..N] [$_DEFAULT]:"
+	 read _ANS
+
+	 # if user hits return set the default and determine the return value
+	 : ${_ANS:=$_DEFAULT}
+	 if [ "$_ANS" = ""]; then
+	     case $_ANS in
+	     Y) return 0 ;;
+	     N) return 1 ;;
+	     esac
+         fi
+
+	 case $_ANS in
+	 y|Y|Yes|YES)
+	     return 0 ;;
+	 n|N|No|NO)
+	     return 1 ;;
+	 # the following is the default
+	 *) echo "Answer either Y or N, default is $_DEFAULT" ;; 
+	 esac
+	 echo $_ANS
+     done
+}
+
+whoisthis()
+# whoisthis
+# Usage) whoisthis userid
+{
+    # check whether we have the right number of input parameters
+    if [ $# -lt 1 ] ; then
+	echo "Usage) whoisthis: [user_id]"
+	return 1
+    fi
+
+    for loop
+    do
+	_USER_NAME=`grep $loop /etc/passwd | awk -F: '{print $5}'`
+
+	if [ "$_USER_NAME" = "" ]; then
+	    echo "[Error] whoisthis: Can't identify the given user name $loop"
+	else
+	    echo "$loop is $_USER_NAME"
+	fi
+    done
+}
+
+str_to_upper()
+# str_to_upper
+# Usage) str_to_upper [input string]
+{
+    # check whether we have the correct number of input parameters
+    if [ $# -lt 1 ]; then
+	echo "[Error] str_to_upper [input string]"
+	return 1;
+    fi
+
+    _STR=$1
+
+    echo $@ |tr '[a-z]' '[A-Z]'
+}
+
+is_upper()
+# is_upper: Check whether the given string is upper
+# Usage) is_upper [input string]
+{
+    if [ $# -ne 1 ]; then
+	echo "Usage) is_upper [input string]"
+	return 1
+    fi
+
+    _IS_UPPER=`echo $1|awk '{if($0~/[^A-Z]/) print "1"}'`
+    if [ "$_IS_UPPER" != "" ] ; then
+	echo "No, $1 is not upper case!"
+	return 1
+    else
+	echo "Yes, $1 is an upper case!"
+	return 0
+    fi
+}
+
+
+    
+
