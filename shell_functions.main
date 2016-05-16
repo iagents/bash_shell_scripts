@@ -127,6 +127,23 @@ str_to_upper()
     echo $@ |tr '[a-z]' '[A-Z]'
 }
 
+str_to_lower()
+# str_to_lower
+# Usage) str_to_lower [input string]
+{
+    # check whether we have the correct number of input parameters
+    if [ $# -lt 1 ]; then
+	echo "[Error] str_to_lower [input string]"
+	return 1;
+    fi
+
+    _STR=$1
+
+    # echo -n suppresses the new line
+    echo -n "$_STR is converted into "
+    echo $@ |tr '[A-Z]' '[a-z]'
+}
+
 is_upper()
 # is_upper: Check whether the given string is upper
 # Usage) is_upper [input string]
@@ -142,6 +159,26 @@ is_upper()
 	return 1
     else
 	echo "Yes, $1 is an upper case!"
+	return 0
+    fi
+}
+
+is_lower()
+# is_lower: Check whether the given string is lower case
+# Usage) is_lower [input string]
+{
+    if [ $# -ne 1 ]; then
+	echo "Usage) is_lower [input string]"
+	return 1
+    fi
+
+    _IS_LOWER=`echo $1|awk '{if($0~/[^a-z]/) print "1"}'`
+    if [ "$_IS_LOWER" != "" ] ; then
+    #if [ "$?" != 1 ]; then
+	echo "No, $1 is not a lower case!"
+	return 1
+    else
+	echo "Yes, $1 is a lower case!"
 	return 0
     fi
 }
